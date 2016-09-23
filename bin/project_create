@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+mkdir -p .project/bin
+
+(
+cat << 'EOF'
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export PROJECT_DIR=$(dirname $DIR)
+EOF
+) > .project/bin/activate
