@@ -5,10 +5,26 @@ project_activate () {
 	if [ -d $project_dir/.project/bin ]; then
 		. $project_dir/.project/bin/activate
 	fi
+	export PATH="$PROJECT_DIR"/bin:$PATH
+	hash -r
+}
+
+project_deactivate () {
+	$(__ps1_is_project)
+	if [ ! $? ]; then
+		return
+	fi
+	__remove_from_path "$PROJECT_DIR"/bin
+	hash -r
+	unset ROJECT_DIR
 }
 
 cdp () {
 	cd $(dirname $PROJECT_DIR)
+}
+
+__remove_from_path () {
+	export PATH=`echo -n $PATH | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//'`;
 }
 
 __ps1_project () {
