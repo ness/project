@@ -10,13 +10,12 @@ project_activate () {
 }
 
 project_deactivate () {
-	$(__ps1_is_project)
-	if [ ! $? ]; then
+	if ! $(__ps1_is_project); then
 		return
 	fi
 	__remove_from_path "$PROJECT_DIR"/bin
 	hash -r
-	unset ROJECT_DIR
+	unset PROJECT_DIR
 }
 
 cdp () {
