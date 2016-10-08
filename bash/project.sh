@@ -36,7 +36,7 @@ __ps1_project () {
 
 __ps1_is_project () {
 	if [ -n "${PROJECT_DIR+set}" ]; then
-		exit 0
+		return 0
 	fi
-	exit 1
+	return 1
 }
