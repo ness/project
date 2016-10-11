@@ -2,9 +2,36 @@
 
 mkdir -p .project/bin
 
-(
+write_activate() {
+    (
 cat << 'EOF'
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export PROJECT_DIR=$(dirname $DIR)
 EOF
-) > .project/bin/activate
+    ) > .project/bin/activate
+}
+
+copy_project_binaries() {
+    if [ -d ~/.local/share/project/$1 ]; then
+        cp ~/.local/share/project/$1/bin/* .project/bin
+        chmod 744 .project/bin/*
+    fi
+}
+
+usage() {
+    echo "-t - project type"
+}
+
+case $1 in
+    -t)
+        shift
+        project_type=$1
+        ;;
+    -h)
+        usage
+        exit
+        ;;
+esac
+
+write_activate
+copy_project_binaries $project_type

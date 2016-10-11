@@ -10,3 +10,5 @@ install:
 	chmod 744 ~/bin/project_create
 	cp bin/project_do ~/bin/
 	chmod 744 ~/bin/project_do
+	mkdir -p ~/.local/share/project/
+	cp -r share/* ~/.local/share/project/
