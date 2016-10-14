@@ -12,8 +12,10 @@ EOF
 }
 
 copy_project_binaries() {
-    if [ -d ~/.local/share/project/$1 ]; then
-        cp ~/.local/share/project/$1/bin/* .project/bin
+    directory="~/.local/share/project/$1"
+    echo "Copying binaries from $directory"
+    if [ -d $directory ]; then
+        cp $directory/bin/* .project/bin
         chmod 744 .project/bin/*
     fi
 }
@@ -22,6 +24,7 @@ usage() {
     echo "-t - project type"
 }
 
+project_type="None"
 case $1 in
     -t)
         shift
@@ -34,4 +37,6 @@ case $1 in
 esac
 
 write_activate
-copy_project_binaries $project_type
+if [ ! $project_type=="None" ]; then
+    copy_project_binaries $project_type
+fi
