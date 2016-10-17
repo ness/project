@@ -37,6 +37,6 @@ case $1 in
 esac
 
 write_activate
-if [ ! $project_type=="None" ]; then
+if [ "$project_type" != "None" ]; then
     copy_project_binaries $project_type
 fi
