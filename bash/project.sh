@@ -1,7 +1,12 @@
 . ~/.local/lib/project/project.sh
 
 project_activate () {
-	project_dir=$(find_project_dir)
+	if [ -n "${1+set}" ]; then
+		project_dir=$1
+	else
+		project_dir=$(find_project_dir)
+	fi
+	echo $project_dir
 	if [ -d $project_dir/.project/bin ]; then
 		. $project_dir/.project/bin/activate
 	fi
