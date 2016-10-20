@@ -1,4 +1,7 @@
-.PHONY: all
+.PHONY: all develop
+
+print-%  : ; @echo $* = $($*)
+binaries = $(shell find ./bin -type f)
 
 all:
 
@@ -12,3 +15,6 @@ install:
 	chmod 744 ~/bin/project_do
 	mkdir -p ~/.local/share/project/
 	cp -r share/* ~/.local/share/project/
+
+develop: $(binaries)
+	for f in $?; do rm ~/bin/$$(basename $$f) ;ln -s $$(pwd)/$$f ~/bin; done
