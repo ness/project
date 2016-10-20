@@ -16,11 +16,19 @@ def find_config_file():
         raise Exception
         #return os.path.expanduser(os.path.join('~', '.' + MAIN_CONFIG_FILE))
 
+def dotted_path(config, key):
+    parts = key.split('.')
+    value = config
+    for part in parts:
+        if isinstance(value, list):
+            part = int(part)
+        value = value[part]
+    return value
 
-def get_config(key):
+def get_config():
     config_file = find_config_file()
     config = yaml.load(open(config_file))
-    return config.get(key)
+    return config
 
 def main():
     parser = argparse.ArgumentParser()
@@ -28,10 +36,15 @@ def main():
     parser.add_argument('--value')
 
     config = parser.parse_args(sys.argv[1:])
-    if config.value:
-        pass
-    else:
-        print(get_config(config.key))
+    try:
+        if config.value:
+            pass
+        else:
+            conf = get_config()
+            print(dotted_path(conf, config.key))
+    except :
+        raise
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
