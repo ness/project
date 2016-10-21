@@ -16,6 +16,11 @@ def find_config_file():
         raise Exception
         #return os.path.expanduser(os.path.join('~', '.' + MAIN_CONFIG_FILE))
 
+def format_config(config, format_type):
+    if format_type == 'shell':
+        return ' '.join('"{}"'.format(item) for item in config)
+    return config
+
 def dotted_path(config, key):
     parts = key.split('.')
     value = config
@@ -34,6 +39,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--key', required=True)
     parser.add_argument('--value')
+    parser.add_argument('--format', default='yaml')
 
     config = parser.parse_args(sys.argv[1:])
     try:
@@ -41,7 +47,7 @@ def main():
             pass
         else:
             conf = get_config()
-            print(dotted_path(conf, config.key))
+            print(format_config(dotted_path(conf, config.key), config.format))
     except :
         raise
         sys.exit(1)
