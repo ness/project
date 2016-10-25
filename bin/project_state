@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+SOURCE_DIRS=( $(project_configuration --key source_dirs --format shell) )
+
+is_dir_repo () {
+    if [ -d $1/.git ]; then
+        return 0
+    fi
+    return 1
+}
+
+case $1 in
+    master) 
+        for sdir in $PROJECT_DIR/../$SOURCE_DIRS; do
+            echo $sdir
+            for repo in $sdir/* ; do
+                echo $repo
+                if is_dir_repo $repo; then
+                    git --work-tree=$repo --git-dir=$repo/.git checkout $1 
+                fi
+            done
+        done
+        ;;
+    *)
+        
+esac
