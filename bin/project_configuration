@@ -18,7 +18,7 @@ def find_config_file():
 
 def format_config(config, format_type):
     if format_type == 'shell':
-        return ' '.join('"{}"'.format(item) for item in config)
+        return ' '.join('{}'.format(item) for item in config)
     return config
 
 def dotted_path(config, key):
@@ -33,13 +33,15 @@ def dotted_path(config, key):
 def write_value(config, key, new_value):
     parts = key.split('.')
     value = config
-    for part in parts[:-1]:
+    for i, part in enumerate(parts[:-1]):
         if isinstance(value, list):
             part = int(part)
         old_value = value.get(part)
         if old_value is None:
-            value[part] = None
+            value[part] = {}
         value = value.get(part)
+    if isinstance(value, list):
+        parts[-1] = int(parts[-1])
     value[parts[-1]] = new_value
     file_path = find_config_file()
     with open(file_path, 'w') as fd:
