@@ -18,7 +18,7 @@ def find_config_file():
 
 def format_config(config, format_type):
     if format_type == 'shell':
-        return ' '.join('"{}"'.format(item) for item in config)
+        return ' '.join('{}'.format(item) for item in config)
     return config
 
 def dotted_path(config, key):
@@ -30,6 +30,24 @@ def dotted_path(config, key):
         value = value[part]
     return value
 
+def write_value(config, key, new_value):
+    parts = key.split('.')
+    value = config
+    for i, part in enumerate(parts[:-1]):
+        if isinstance(value, list):
+            part = int(part)
+        old_value = value.get(part)
+        if old_value is None:
+            value[part] = {}
+        value = value.get(part)
+    if isinstance(value, list):
+        parts[-1] = int(parts[-1])
+    value[parts[-1]] = new_value
+    file_path = find_config_file()
+    with open(file_path, 'w') as fd:
+        yaml.dump(config, fd)
+
+
 def get_config():
     config_file = find_config_file()
     config = yaml.load(open(config_file))
@@ -39,12 +57,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--key', required=True)
     parser.add_argument('--value')
+    parser.add_argument('--values', action='append')
     parser.add_argument('--format', default='yaml')
 
     config = parser.parse_args(sys.argv[1:])
     try:
         if config.value:
-            pass
+            conf = get_config()
+            write_value(conf, config.key, config.value)
+        elif config.values:
+            conf = get_config()
+            write_value(conf, config.key, config.values)
         else:
             conf = get_config()
             print(format_config(dotted_path(conf, config.key), config.format))
