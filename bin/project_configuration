@@ -6,12 +6,10 @@ import sys
 import yaml
 import argparse
 
-MAIN_CONFIG_FILE = 'main.yaml'
-
-def find_config_file():
+def find_config_file(storage):
     config_dir = os.environ.get('PROJECT_DIR')
     if config_dir:
-        return os.path.join(config_dir, MAIN_CONFIG_FILE)
+        return os.path.join(config_dir, storage + '.yaml')
     else:
         raise Exception
         #return os.path.expanduser(os.path.join('~', '.' + MAIN_CONFIG_FILE))
@@ -30,7 +28,7 @@ def dotted_path(config, key):
         value = value[part]
     return value
 
-def write_value(config, key, new_value):
+def write_value(config, key, new_value, storage='main'):
     parts = key.split('.')
     value = config
     for i, part in enumerate(parts[:-1]):
@@ -43,13 +41,13 @@ def write_value(config, key, new_value):
     if isinstance(value, list):
         parts[-1] = int(parts[-1])
     value[parts[-1]] = new_value
-    file_path = find_config_file()
+    file_path = find_config_file(storage)
     with open(file_path, 'w') as fd:
         yaml.dump(config, fd)
 
 
-def get_config():
-    config_file = find_config_file()
+def get_config(storage):
+    config_file = find_config_file(storage)
     config = yaml.load(open(config_file))
     return config
 
@@ -59,17 +57,18 @@ def main():
     parser.add_argument('--value')
     parser.add_argument('--values', action='append')
     parser.add_argument('--format', default='yaml')
+    parser.add_argument('--storage', default='main')
 
     config = parser.parse_args(sys.argv[1:])
     try:
         if config.value:
-            conf = get_config()
+            conf = get_config(config.storage)
             write_value(conf, config.key, config.value)
         elif config.values:
-            conf = get_config()
+            conf = get_config(config.storage)
             write_value(conf, config.key, config.values)
         else:
-            conf = get_config()
+            conf = get_config(config.storage)
             print(format_config(dotted_path(conf, config.key), config.format))
     except :
         raise
