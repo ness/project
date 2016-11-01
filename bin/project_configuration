@@ -28,7 +28,7 @@ def dotted_path(config, key):
         value = value[part]
     return value
 
-def write_value(config, key, new_value, storage='main'):
+def set_value(config, key, new_value):
     parts = key.split('.')
     value = config
     for i, part in enumerate(parts[:-1]):
@@ -41,10 +41,12 @@ def write_value(config, key, new_value, storage='main'):
     if isinstance(value, list):
         parts[-1] = int(parts[-1])
     value[parts[-1]] = new_value
+    return config
+
+def put_config(config, storage):
     file_path = find_config_file(storage)
     with open(file_path, 'w') as fd:
         yaml.dump(config, fd)
-
 
 def get_config(storage):
     config_file = find_config_file(storage)
@@ -63,10 +65,12 @@ def main():
     try:
         if config.value:
             conf = get_config(config.storage)
-            write_value(conf, config.key, config.value)
+            conf = set_value(conf, config.key, config.value)
+            put_config(conf, config.storage)
         elif config.values:
             conf = get_config(config.storage)
-            write_value(conf, config.key, config.values)
+            conf = set_value(conf, config.key, config.value)
+            put_config(conf, config.storage)
         else:
             conf = get_config(config.storage)
             print(format_config(dotted_path(conf, config.key), config.format))
