@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+project_activate 
+if [ -z ${EDITOR:set} ]; then
+    gvim
+else
+    $EDITOR
+fi
