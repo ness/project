@@ -46,6 +46,19 @@ def set_value(config, key, new_value):
     value[parts[-1].replace(r'\.', '.')] = new_value
     return config
 
+def remove(config, key):
+    parts = re.split(r'(?<!\\)\.', key)
+    value = config
+    for i, part in enumerate(parts[:-1]):
+        part = part.replace(r'\.', '.')
+        if isinstance(value, list):
+            part = int(part)
+        value = value.get(part)
+    if isinstance(value, list):
+        parts[-1] = int(parts[-1])
+    del value[parts[-1]]
+    return config
+
 def put_config(config, storage):
     file_path = find_config_file(storage)
     with open(file_path, 'w') as fd:
@@ -56,30 +69,56 @@ def get_config(storage):
     config = yaml.load(open(config_file))
     return config
 
+def action_modify(cmd_config):
+    if cmd_config.value and cmd_config.key:
+        conf = get_config(cmd_config.storage)
+        conf = set_value(conf, cmd_config.key, cmd_config.value)
+        put_config(conf, cmd_config.storage)
+    elif cmd_config.values and cmd_config.key:
+        conf = get_config(cmd_config.storage)
+        conf = set_value(conf, cmd_config.key, cmd_config.values)
+        put_config(conf, cmd_config.storage)
+
+def action_show(cmd_config):
+    if cmd_config.key:
+        conf = get_config(cmd_config.storage)
+        print(format_config(dotted_path(conf, cmd_config.key), cmd_config.format))
+    else:
+        conf = get_config(cmd_config.storage)
+        print(format_config(conf, cmd_config.format))
+
+def action_remove(cmd_config):
+    if cmd_config.key:
+        conf = get_config(cmd_config.storage)
+        conf = remove(conf, cmd_config.key)
+        put_config(conf, cmd_config.storage)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--key')
-    parser.add_argument('--value')
-    parser.add_argument('--values', action='append')
-    parser.add_argument('--format', default='yaml')
     parser.add_argument('--storage', default='main')
 
-    config = parser.parse_args(sys.argv[1:])
+    sub_parsers = parser.add_subparsers()
+
+    modify_parser = sub_parsers.add_parser('modify')
+    modify_parser.add_argument('--key')
+    modify_parser.add_argument('--value')
+    modify_parser.add_argument('--values', action='append')
+    modify_parser.set_defaults(action=action_modify)
+
+    remove_parser = sub_parsers.add_parser('remove')
+    remove_parser.add_argument('--key')
+    remove_parser.set_defaults(action=action_remove)
+
+    show_parser = sub_parsers.add_parser('show')
+    show_parser.add_argument('--key')
+    show_parser.add_argument('--format', default='yaml')
+    show_parser.set_defaults(action=action_show)
+
+
+    args = parser.parse_args(sys.argv[1:])
+
     try:
-        if config.value and config.key:
-            conf = get_config(config.storage)
-            conf = set_value(conf, config.key, config.value)
-            put_config(conf, config.storage)
-        elif config.values and config.key:
-            conf = get_config(config.storage)
-            conf = set_value(conf, config.key, config.values)
-            put_config(conf, config.storage)
-        elif config.key:
-            conf = get_config(config.storage)
-            print(format_config(dotted_path(conf, config.key), config.format))
-        else:
-            conf = get_config(config.storage)
-            print(format_config(conf, config.format))
+        args.action(args)
     except :
         raise
         sys.exit(1)
