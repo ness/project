@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-project_activate 
+eval $(project_environment)
 if [ -z ${EDITOR:set} ]; then
     gvim
 else
