@@ -17,7 +17,10 @@ def find_config_file(storage):
 
 def format_config(config, format_type):
     if format_type == 'shell':
-        return ' '.join('{}'.format(item) for item in config)
+        if isinstance(config, list):
+            return ' '.join('{}'.format(item) for item in config)
+        else:
+            return config
     return config
 
 def dotted_path(config, key):

@@ -23,7 +23,16 @@ restore () {
 			done
 			;;
 		*)
-			
+			for repo in $SOURCE_DIRS; do
+				repo_dir=$PROJECT_DIR/../$repo
+				if is_dir_repo $repo; then
+					period_escaped_repo=${repo//[.]/\\\.}
+					branch=$(project_configuration show --key states.$1.$period_escaped_repo --format shell)
+					echo $repo  -  $branch
+					git --work-tree=$repo --git-dir=$repo/.git checkout $branch
+				fi
+			done
+			;;
 	esac
 }
 
@@ -43,5 +52,6 @@ case "$1" in
 		record $2
 		;;
 	restore)
+		restore $2
 		;;
 esac
