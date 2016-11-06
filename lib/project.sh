@@ -17,3 +17,10 @@ upsearch () {
 find_project_dir () {
 	echo $(upsearch ".project")
 }	
+
+is_project () {
+	if [ -n "${PROJECT_DIR+set}" ]; then
+		return 0
+	fi
+	return 1
+}

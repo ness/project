@@ -2,13 +2,33 @@
 
 . ~/.local/lib/project/project.sh
 
-if [ -n "${1+set}" ]; then
-	project_dir=$1
-else
-	project_dir=$(find_project_dir)
-fi
-echo "export PROJECT_DIR=$project_dir/.project"
-if [ -d $project_dir/.project/bin ]; then
-	. $project_dir/.project/bin/activate
-fi
-echo "export PATH=\"$PROJECT_DIR\"/bin:$PATH"
+__remove_from_path () {
+	PATH=`echo -n $PATH | awk -v RS=: -v ORS=: '$0 != "'$1'"' | sed 's/:$//'`;
+	echo "export PATH=$PATH ;"
+}
+
+case "$1" in
+	activate)
+		. ~/.local/lib/project/project.sh
+		shift
+
+		if [ -n "${1+set}" ]; then
+			project_dir=$1
+		else
+			project_dir=$(find_project_dir)
+		fi
+		echo "export PROJECT_DIR=$project_dir/.project ;"
+		if [ -d $project_dir/.project/bin ]; then
+			. $project_dir/.project/bin/activate
+		fi
+		echo "export PATH=\"$PROJECT_DIR\"/bin:$PATH ;"
+		;;
+	deactivate)
+		shift
+		if ! $(is_project); then
+			return
+		fi
+		__remove_from_path "$PROJECT_DIR"/bin
+		echo "unset PROJECT_DIR ;"
+		;;
+esac
