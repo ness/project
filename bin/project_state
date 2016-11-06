@@ -9,18 +9,39 @@ is_dir_repo () {
     return 1
 }
 
-case $1 in
-    master) 
-        for sdir in $PROJECT_DIR/../$SOURCE_DIRS; do
-            echo $sdir
-            for repo in $sdir/* ; do
-                echo $repo
-                if is_dir_repo $repo; then
-                    git --work-tree=$repo --git-dir=$repo/.git checkout $1 
-                fi
-            done
-        done
-        ;;
-    *)
-        
+restore () {
+	case $1 in
+		master) 
+			for sdir in $PROJECT_DIR/../$SOURCE_DIRS; do
+				echo $sdir
+				for repo in $sdir/* ; do
+					echo $repo
+					if is_dir_repo $repo; then
+						git --work-tree=$repo --git-dir=$repo/.git checkout $1 
+					fi
+				done
+			done
+			;;
+		*)
+			
+	esac
+}
+
+record () {
+	for repo in $SOURCE_DIRS; do
+		repo_dir=$PROJECT_DIR/../$repo
+		if is_dir_repo $repo; then
+			branch=$(git --work-tree=$repo --git-dir=$repo/.git rev-parse --abbrev-ref HEAD)
+			period_escaped_repo=${repo//[.]/\\\.}
+			project_configuration --key states.$1.$period_escaped_repo --value $branch
+		fi
+	done
+}
+
+case "$1" in
+	record)
+		record $2
+		;;
+	restore)
+		;;
 esac

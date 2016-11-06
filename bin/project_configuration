@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import sys
 import yaml
 import argparse
@@ -20,18 +21,20 @@ def format_config(config, format_type):
     return config
 
 def dotted_path(config, key):
-    parts = key.split('.')
+    parts = re.split(r'(?<!\\)\.', key)
     value = config
     for part in parts:
+        part = part.replace(r'\.', '.')
         if isinstance(value, list):
             part = int(part)
         value = value[part]
     return value
 
 def set_value(config, key, new_value):
-    parts = key.split('.')
+    parts = re.split(r'(?<!\\)\.', key)
     value = config
     for i, part in enumerate(parts[:-1]):
+        part = part.replace(r'\.', '.')
         if isinstance(value, list):
             part = int(part)
         old_value = value.get(part)
@@ -40,7 +43,7 @@ def set_value(config, key, new_value):
         value = value.get(part)
     if isinstance(value, list):
         parts[-1] = int(parts[-1])
-    value[parts[-1]] = new_value
+    value[parts[-1].replace(r'\.', '.')] = new_value
     return config
 
 def put_config(config, storage):
@@ -69,7 +72,7 @@ def main():
             put_config(conf, config.storage)
         elif config.values and config.key:
             conf = get_config(config.storage)
-            conf = set_value(conf, config.key, config.value)
+            conf = set_value(conf, config.key, config.values)
             put_config(conf, config.storage)
         elif config.key:
             conf = get_config(config.storage)
