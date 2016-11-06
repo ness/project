@@ -55,7 +55,7 @@ def get_config(storage):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--key', required=True)
+    parser.add_argument('--key')
     parser.add_argument('--value')
     parser.add_argument('--values', action='append')
     parser.add_argument('--format', default='yaml')
@@ -63,17 +63,20 @@ def main():
 
     config = parser.parse_args(sys.argv[1:])
     try:
-        if config.value:
+        if config.value and config.key:
             conf = get_config(config.storage)
             conf = set_value(conf, config.key, config.value)
             put_config(conf, config.storage)
-        elif config.values:
+        elif config.values and config.key:
             conf = get_config(config.storage)
             conf = set_value(conf, config.key, config.value)
             put_config(conf, config.storage)
-        else:
+        elif config.key:
             conf = get_config(config.storage)
             print(format_config(dotted_path(conf, config.key), config.format))
+        else:
+            conf = get_config(config.storage)
+            print(format_config(conf, config.format))
     except :
         raise
         sys.exit(1)
