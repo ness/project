@@ -21,6 +21,11 @@ def format_config(config, format_type):
             return ' '.join('{}'.format(item) for item in config)
         else:
             return config
+    if format_type == 'newline':
+        if isinstance(config, list):
+            return '\n'.join('{}'.format(item) for item in config)
+        else:
+            return config
     return config
 
 def dotted_path(config, key):

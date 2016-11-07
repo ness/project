@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-SOURCE_DIRS=( $(project_configuration show --key source_dirs --format shell) )
+old_IFS=$IFS
+IFS=$'\n'
+SOURCE_DIRS=( $(project_configuration show --key source_dirs --format newline) )
+IFS=$old_IFS
 
 is_dir_repo () {
     if [ -d $1/.git ]; then
@@ -23,7 +26,7 @@ restore () {
 			done
 			;;
 		*)
-			for repo in $SOURCE_DIRS; do
+			for repo in ${SOURCE_DIRS[@]}; do
 				repo_dir=$PROJECT_DIR/../$repo
 				if is_dir_repo $repo; then
 					period_escaped_repo=${repo//[.]/\\\.}
@@ -37,7 +40,7 @@ restore () {
 }
 
 record () {
-	for repo in $SOURCE_DIRS; do
+	for repo in ${SOURCE_DIRS[@]}; do
 		repo_dir=$PROJECT_DIR/../$repo
 		if is_dir_repo $repo; then
 			branch=$(git --work-tree=$repo --git-dir=$repo/.git rev-parse --abbrev-ref HEAD)
