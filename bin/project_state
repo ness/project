@@ -43,7 +43,7 @@ record () {
 	for repo in ${SOURCE_DIRS[@]}; do
 		repo_dir=$PROJECT_DIR/../$repo
 		if is_dir_repo $repo; then
-			branch=$(git symbolic-ref -q --short HEAD || git describe --tags --exact-match HEAD 2>/dev/null || git rev-parse -q HEAD)
+			branch=$(git --work-tree=$repo_dir --git-dir=$repo_dir/.git symbolic-ref -q --short HEAD || git --work-tree=$repo_dir --git-dir=$repo_dir/.git describe --tags --exact-match HEAD 2>/dev/null || git --work-tree=$repo_dir --git-dir=$repo_dir/.git rev-parse -q HEAD)
 			period_escaped_repo=${repo//[.]/\\\.}
 			project_configuration modify --key states.$1.$period_escaped_repo --value $branch
 		fi
