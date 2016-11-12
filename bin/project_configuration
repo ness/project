@@ -101,10 +101,14 @@ def action_remove(cmd_config):
         conf = remove(conf, cmd_config.key)
         put_config(conf, cmd_config.storage)
 
+def action_help(cmd_config, parser):
+    parser.print_help()
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--storage', default='main')
 
+    parser.set_defaults(action=lambda conf: action_help(conf, parser))
     sub_parsers = parser.add_subparsers()
 
     modify_parser = sub_parsers.add_parser('modify')
