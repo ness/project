@@ -50,11 +50,25 @@ record () {
 	done
 }
 
+show () {
+	for repo in ${SOURCE_DIRS[@]}; do
+		repo_dir=$PROJECT_DIR/../$repo
+		if is_dir_repo $repo; then
+			branch=$(git --work-tree=$repo_dir --git-dir=$repo_dir/.git symbolic-ref -q --short HEAD || git --work-tree=$repo_dir --git-dir=$repo_dir/.git describe --tags --exact-match HEAD 2>/dev/null || git --work-tree=$repo_dir --git-dir=$repo_dir/.git rev-parse -q HEAD)
+			echo $repo - $branch
+		fi
+	done
+
+}
+
 case "$1" in
 	record)
 		record $2
 		;;
 	restore)
 		restore $2
+		;;
+	show)
+		show
 		;;
 esac
