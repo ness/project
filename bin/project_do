@@ -1,4 +1,33 @@
 #!/usr/bin/env bash
 
-cd $PROJECT_DIR/..
-"$@"
+do_dirs () {
+	cd $PROJECT_DIR/..
+	"$@"
+}
+
+do_key () {
+	echo key: $1
+	shift
+	echo $@
+	old_IFS=$IFS
+	IFS=$'\n'
+	SOURCE_DIRS=( $(project_configuration show --key source_dirs --format newline) )
+	IFS=$old_IFS
+
+	for repo in ${SOURCE_DIRS[@]}; do
+		repo_dir=$PROJECT_DIR/../$repo
+		"$@" $repo_dir
+	done
+}
+
+case "$1" in
+	--key)
+		shift
+		key=$1
+		shift
+		do_key $key $@
+		;;
+	*)
+		do_dirs $@
+		;;
+esac
