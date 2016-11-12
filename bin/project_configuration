@@ -28,8 +28,11 @@ def format_config(config, format_type):
             return config
     return config
 
+def _split_key(key):
+    return re.split(r'(?<!\\)\.', key)
+
 def dotted_path(config, key):
-    parts = re.split(r'(?<!\\)\.', key)
+    parts = _split_key(key)
     value = config
     for part in parts:
         part = part.replace(r'\.', '.')
@@ -39,7 +42,7 @@ def dotted_path(config, key):
     return value
 
 def set_value(config, key, new_value):
-    parts = re.split(r'(?<!\\)\.', key)
+    parts = _split_key(key)
     value = config
     for i, part in enumerate(parts[:-1]):
         part = part.replace(r'\.', '.')
@@ -55,7 +58,7 @@ def set_value(config, key, new_value):
     return config
 
 def remove(config, key):
-    parts = re.split(r'(?<!\\)\.', key)
+    parts = _split_key(key)
     value = config
     for i, part in enumerate(parts[:-1]):
         part = part.replace(r'\.', '.')
