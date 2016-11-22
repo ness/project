@@ -50,7 +50,13 @@ record () {
 	done
 }
 
-show () {
+state () {
+    state_name="$1"
+    echo Status: "$1"
+    project_configuration show --key states."$state_name"
+}
+
+current () {
 	for repo in ${SOURCE_DIRS[@]}; do
 		repo_dir=$PROJECT_DIR/../$repo
 		if is_dir_repo $repo; then
@@ -68,10 +74,13 @@ case "$1" in
 	restore)
 		restore $2
 		;;
-	show)
-		show
+	current)
+		current
+		;;
+	state)
+		state $2
 		;;
     *)
-        show
+        current
         ;;
 esac
