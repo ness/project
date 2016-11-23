@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+. ~/lib/project/lib.sh
+
+run() {
+    hook_name=$1
+    old_IFS=$IFS
+    IFS=$'\n'
+    hooks=( $(project_configuration show --key hooks.$hook_name --format newline ) )
+    IFS=$old_IFS
+
+    echo $hooks
+    for hook in ${hooks[@]}; do
+        echo ~/.local/share/project/hooks/$hook
+    done
+}
+
+useage() {
+    echo $0 "run <hookname>"
+}
+
+case "$1" in
+    run)
+        run $2
+        ;;
+    *)
+        useage
+        ;;
+esac
