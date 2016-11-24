@@ -16,7 +16,9 @@ install:
 	mkdir -p ~/.local/share/project/
 	cp -r share/* ~/.local/share/project/
 
-develop: $(binaries) hooks_develop
+develop: bin_develop hooks_develop
+
+bin_develop: $(binaries)
 	for f in $?; do rm ~/bin/$$(basename $$f) ;ln -s $$(pwd)/$$f ~/bin; done
 
 hooks_develop:
