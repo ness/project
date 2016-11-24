@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+project_dir=$PROJECT_DIR
+old_IFS=$IFS
+IFS=$'\n'
+SOURCE_DIRS=( $(project_configuration show --key source_dirs --format newline ) )
+source_include_pattern=( $(project_configuration show --key source_file_pattern --format newline ) )
+source_exclude_pattern=( $(project_configuration show --key source_file_exclude_pattern --format newline ) )
+
+DIRS=( $(project_configuration show --key dirs --format newline ) )
+#exclude_pattern=( $(project_configuration show --key exclude_pattern --format newline ) )
+
+IFS=$old_IFS
+
+if [[ -z $PROJECT_DIR ]]; then
+    project_dir=$(find_dir ".project")
+fi
+project_dir=$project_dir
+
+exclude_pattern() {
+    pattern_str=""
+    for pattern in ${source_exclude_pattern[@]}; do
+         echo -n " -not ( -path $pattern -prune )"
+    done
+    return
+}
+
+temp_dir=`mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir'`
+if [ -f $project_dir/hooks/create_source_filelist.sh ]; then
+    $project_dir/hooks/create_source_filelist.sh $temp_dir
+else
+    find "${SOURCE_DIRS[@]}" -type f `exclude_pattern` | xargs -i'{}' echo -e "{}\topen {}" > $temp_dir/source_filelist.txt
+fi
+
+
+find "${DIRS[@]}" -type f `exclude_pattern` | xargs -i'{}' echo -e "{}\topen {}" > $temp_dir/filelist.txt
+mv $temp_dir/source_filelist.txt $project_dir
+mv $temp_dir/filelist.txt $project_dir
+rm -r $temp_dir
+
