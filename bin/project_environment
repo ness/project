@@ -7,6 +7,17 @@ __remove_from_path () {
 	echo "export PATH=$PATH ;"
 }
 
+useage() {
+	echo "$0"
+	echo ""
+	echo "activate 	- prints shell commands to activate the project"
+	echo "deactivate 	- prints shell commands to deactivate the project"
+	echo "-h/--help 	- this text"
+	echo ""
+	echo "Example:"
+	echo 'eval $(project_environment activate)'
+}
+
 case "$1" in
 	activate)
 		. ~/.local/lib/project/project.sh
@@ -30,5 +41,11 @@ case "$1" in
 		fi
 		__remove_from_path "$PROJECT_DIR"/bin
 		echo "unset PROJECT_DIR ;"
+		;;
+	--help)
+		useage
+		;;
+	-h)
+		useage
 		;;
 esac
