@@ -18,22 +18,20 @@ fi
 project_dir=$project_dir
 
 exclude_pattern() {
+    name=$1[@]
+    exclude_patterns=("${!name}")
     pattern_str=""
-    for pattern in ${source_exclude_pattern[@]}; do
+    for pattern in ${exclude_patterns[@]}; do
          echo -n " -not ( -path $pattern -prune )"
     done
     return
 }
 
 temp_dir=`mktemp -d 2>/dev/null || mktemp -d -t 'mytmpdir'`
-if [ -f $project_dir/hooks/create_source_filelist.sh ]; then
-    $project_dir/hooks/create_source_filelist.sh $temp_dir
-else
-    find "${SOURCE_DIRS[@]}" -type f `exclude_pattern` | xargs -i'{}' echo -e "{}\topen {}" > $temp_dir/source_filelist.txt
-fi
 
+find "${SOURCE_DIRS[@]}" -type f `exclude_pattern source_exclude_pattern` | xargs -i'{}' echo -e "{}\topen {}" > $temp_dir/source_filelist.txt
+find "${DIRS[@]}" -type f `exclude_pattern exclude_pattern` | xargs -i'{}' echo -e "{}\topen {}" > $temp_dir/filelist.txt
 
-find "${DIRS[@]}" -type f `exclude_pattern` | xargs -i'{}' echo -e "{}\topen {}" > $temp_dir/filelist.txt
 mv $temp_dir/source_filelist.txt $project_dir
 mv $temp_dir/filelist.txt $project_dir
 rm -r $temp_dir
