@@ -16,7 +16,11 @@ do_key () {
 
 	for repo in ${SOURCE_DIRS[@]}; do
 		repo_dir=$PROJECT_DIR/../$repo
-		"$@" $repo_dir
+		echo -e "\e[0;32m""$repo_dir"
+		echo -e -n "\e[0m"
+		pushd "$repo_dir" > /dev/null
+		"$@"
+		popd > /dev/null
 	done
 }
 
