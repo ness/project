@@ -15,6 +15,11 @@ run() {
     done
 }
 
+show() {
+    hooks=$(project_configuration show --key hooks --format newline )
+    echo $hooks
+}
+
 useage() {
     echo $0 "run <hookname>"
 }
@@ -22,6 +27,9 @@ useage() {
 case "$1" in
     run)
         run $2
+        ;;
+    show)
+        show
         ;;
     *)
         useage
