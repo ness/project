@@ -104,6 +104,22 @@ def action_remove(cmd_config):
         conf = remove(conf, cmd_config.key)
         put_config(conf, cmd_config.storage)
 
+def action_iter(cmd_config):
+    if cmd_config.key:
+        conf = get_config(cmd_config.storage)
+        print(format_config(dotted_path(conf, cmd_config.key), cmd_config.format))
+    else:
+        conf = get_config(cmd_config.storage)
+        print(format_config(conf, cmd_config.format))
+
+def action_iter_key(cmd_config):
+    conf = get_config(cmd_config.storage)
+    if cmd_config.key:
+        conf = dotted_path(conf, cmd_config.key)
+        if not isinstance(conf, dict):
+            raise Exception('Found config is not a mapping')
+    print(format_config([key for key in conf.keys()], cmd_config.format))
+
 def action_help(cmd_config, parser):
     parser.print_help()
 
@@ -129,6 +145,15 @@ def main():
     show_parser.add_argument('--format', default='yaml')
     show_parser.set_defaults(action=action_show)
 
+    iter_parser = sub_parsers.add_parser('iter')
+    iter_parser.add_argument('--format', default='yaml')
+    iter_parser.add_argument('--key')
+    iter_parser.set_defaults(action=action_iter)
+
+    iterkey_parser = sub_parsers.add_parser('iter-keys')
+    iterkey_parser.add_argument('--format', default='yaml')
+    iterkey_parser.add_argument('--key')
+    iterkey_parser.set_defaults(action=action_iter_key)
 
     args = parser.parse_args(sys.argv[1:])
 
