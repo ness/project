@@ -1,0 +1,38 @@
+TODO
+=====
+- project_configuration - format=null - terminate each path/output with \0
+- project_configuration - iter-keys - allow the interation over keys to handle dicts in scripts
+- project_configuration - iter - make it more clear what will happen - show is for humans, iter for scripts
+- cd to project_dir when running hooks
+
+IDEAS
+======
+
+- bin/project_state 
+    - where and how to save the states - state.yaml
+    - get it from requirement.txt - special name for it
+    - git repos finden oder konfigurieren
+    - sub command record - will find git dirs in 2 layers
+- Try very hard to use existing things.
+    - Makefiles etc.
+I need a configuration management facility -.-;
+
+- The idea to query for it from the shell is good - interface first.
+- Starting with own format
+
+OPEN Questions
+===============
+
+- How to define commands for the project?
+- Which are the common sets of commands for every project.
+    - clean
+    - build
+    - test
+    - index
+- project_edit - should there be a hook? or depend on $EDITOR
+    - bash completion for files - and project_edit should find the right editor for the file
+
+DONE
+=====
+
+- bin/project_edit - opens your editor/ide etc.
