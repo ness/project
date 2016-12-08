@@ -1,9 +1,5 @@
 TODO
 =====
-- project_configuration - format=null - terminate each path/output with \0
-- project_configuration - iter-keys - allow the interation over keys to handle dicts in scripts
-- project_configuration - iter - make it more clear what will happen - show is for humans, iter for scripts
-- cd to project_dir when running hooks
 
 IDEAS
 ======
@@ -35,4 +31,8 @@ OPEN Questions
 DONE
 =====
 
+- project_configuration - iter-keys - allow the interation over keys to handle dicts in scripts
+- project_configuration - iter - make it more clear what will happen - show is for humans, iter for scripts
+- project_configuration - format=null - terminate each path/output with \0
+- cd to project_dir when running hooks
 - bin/project_edit - opens your editor/ide etc.
