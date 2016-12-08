@@ -6,17 +6,19 @@ run() {
     hook_name=$1
     old_IFS=$IFS
     IFS=$'\n'
-    hooks=( $(project_configuration show --key hooks.$hook_name --format newline ) )
+    hooks=( $(project_configuration iter --key hooks.$hook_name --format newline ) )
     IFS=$old_IFS
 
+    pushd $PROJECT_DIR/.. > /dev/null
     echo $hooks
     for hook in ${hooks[@]}; do
         ~/.local/share/project/hooks/$hook
     done
+    popd > /dev/null
 }
 
 show() {
-    hooks=$(project_configuration show --key hooks --format newline )
+    hooks=$(project_configuration iter-keys --key hooks --format newline )
     echo $hooks
 }
 
