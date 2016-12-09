@@ -18,8 +18,7 @@ run() {
 }
 
 show() {
-    hooks=$(project_configuration iter-keys --key hooks --format newline )
-    echo $hooks
+    project_configuration iter-keys --key hooks --format newline
 }
 
 useage() {
