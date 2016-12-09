@@ -7,6 +7,9 @@ TODO
     - update repos - git pull essentially
 - clean up paths - .project/../ is just ugly
 - project hook run - build/execute the project
+- document keys for configuration ...
+    - what keys are currently used in the provided scripts
+    - what do they mean or what do the scripts think they mean :/
 
 IDEAS
 ======
