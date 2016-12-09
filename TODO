@@ -1,5 +1,12 @@
 TODO
 =====
+- rethink project_do and project_state
+- project_state show updates 
+    - are there changes from remote??
+    - for git repos are there changes that can be fast forwarded
+    - update repos - git pull essentially
+- clean up paths - .project/../ is just ugly
+- project hook run - build/execute the project
 
 IDEAS
 ======
@@ -7,7 +14,7 @@ IDEAS
 - bin/project_state 
     - where and how to save the states - state.yaml
     - get it from requirement.txt - special name for it
-    - git repos finden oder konfigurieren
+    - git repos find and configure
     - sub command record - will find git dirs in 2 layers
 - Try very hard to use existing things.
     - Makefiles etc.
