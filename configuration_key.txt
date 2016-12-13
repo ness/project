@@ -1,0 +1,11 @@
+- ['key', 'source', 'type', 'meaning']
+- 
+    key: 'source_dirs'
+    source: 'main'
+    type: 'list'
+    meaning: 'List of directories containing source code - most likely to change'
+- 
+    key: 'lib_dirs'
+    source: 'main'
+    type: 'list'
+    meaning: 'List of directories containing source code - third party code'
