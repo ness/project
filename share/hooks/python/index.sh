@@ -9,5 +9,5 @@ SOURCE_DIRS=( $(project_configuration iter --key source_dirs --format newline ) 
 IFS=$old_IFS
 
 
-ctags -R --fields=+l --languages=python --python-kinds=-iv -f $PROJECT_DIR/.tags.sources "${SOURCE_DIRS[@]}"
-ctags -R --fields=+l --languages=python --python-kinds=-iv -f $PROJECT_DIR/.tags.lib "${LIB_DIRS[@]}"
+ctags -R --fields=+l --languages=python --python-kinds=-iv --tag-relative=yes -f $PROJECT_DIR/tags.sources "${SOURCE_DIRS[@]}"
+ctags -R --tag-relative=yes --fields=+l --languages=python --python-kinds=-iv -f $PROJECT_DIR/tags.lib "${LIB_DIRS[@]}"
