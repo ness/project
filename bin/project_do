@@ -10,18 +10,11 @@ do_key () {
 	shift
 	echo $@
 	old_IFS=$IFS
-	IFS=$'\n'
-	SOURCE_DIRS=( $(project_configuration show --key source_dirs --format newline) )
+	IFS=$'\0'
+	SOURCE_DIRS=( $(project_configuration show --key source_dirs --format null) )
 	IFS=$old_IFS
 
-	for repo in ${SOURCE_DIRS[@]}; do
-		repo_dir=$PROJECT_DIR/../$repo
-		echo -e "\e[0;32m""$repo_dir"
-		echo -e -n "\e[0m"
-		pushd "$repo_dir" > /dev/null
-		"$@"
-		popd > /dev/null
-	done
+    project_configuration iter --key source_dirs --format null | parallel -0 --no-notice -k "echo -e -n '\e[0;32m'; echo {}; echo -e -n '\e[0m'; pushd {} > /dev/null; "$@"; popd > /dev/null;"
 }
 
 case "$1" in
