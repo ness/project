@@ -9,12 +9,8 @@ do_key () {
 	echo key: $1
 	shift
 	echo $@
-	old_IFS=$IFS
-	IFS=$'\0'
-	SOURCE_DIRS=( $(project_configuration show --key source_dirs --format null) )
-	IFS=$old_IFS
 
-    project_configuration iter --key source_dirs --format null | parallel -0 --no-notice -k "echo -e -n '\e[0;32m'; echo {}; echo -e -n '\e[0m'; pushd {} > /dev/null; "$@"; popd > /dev/null;"
+    project_configuration iter --key source_dirs --format null | parallel -0 --no-notice -k 'path={}; echo -e -n "\e[0;32m"; echo {}; echo -e -n "\e[0m"; pushd ${path/#\~/$HOME} > /dev/null && ' $@ ' && popd > /dev/null;'
 }
 
 case "$1" in
