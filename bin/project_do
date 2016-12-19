@@ -5,20 +5,40 @@ do_dirs () {
 	"$@"
 }
 
-do_key () {
+for_item () {
 	echo key: $1
+	key=$1
 	shift
 	echo $@
 
-    project_configuration iter --key source_dirs --format null | parallel -0 --no-notice -k 'path={}; echo -e -n "\e[0;32m"; echo {}; echo -e -n "\e[0m"; pushd ${path/#\~/$HOME} > /dev/null && ' $@ ' && popd > /dev/null;'
+    project_configuration iter --key $key --format null | parallel -0 --no-notice -k 'path={}; echo -e -n "\e[0;32m"; echo  == {} ==; echo -e -n "\e[0m"; pushd ${path/#\~/$HOME} > /dev/null && ' $@ ' && popd > /dev/null;'
+}
+
+for_keys () {
+	echo $@
+	if [ $1 == '--' ]; then
+		shift
+		project_configuration iter-keys --format null | xargs -0 -I '{}' $@
+	else
+		key=$1
+		shift
+		if $1 == '--'; then
+			shift
+		fi
+		project_configuration iter-keys --key $1 --format null | xargs -0 -I '{}' $@
+	fi
 }
 
 case "$1" in
-	--key)
+	--for)
 		shift
 		key=$1
 		shift
-		do_key $key $@
+		for_item $key $@
+		;;
+	--for-keys)
+		shift
+		for_keys $@
 		;;
 	*)
 		do_dirs $@
