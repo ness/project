@@ -118,7 +118,7 @@ def action_iter_key(cmd_config):
         conf = dotted_path(conf, cmd_config.key)
         if not isinstance(conf, dict):
             raise Exception('Found config is not a mapping')
-    print(format_config([key for key in conf.keys()], cmd_config.format))
+    print(format_config([key for key in conf.keys()], cmd_config.format), end='')
 
 def action_help(cmd_config, parser):
     parser.print_help()
