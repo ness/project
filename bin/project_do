@@ -10,11 +10,13 @@ for_item () {
 	key=$1
 	shift
 	echo $@
+    cd $PROJECT_DIR/..
 
     project_configuration iter --key $key --format null | parallel -0 --no-notice -k 'path={}; echo -e -n "\e[0;32m"; echo  == {} ==; echo -e -n "\e[0m"; pushd ${path/#\~/$HOME} > /dev/null && ' $@ ' && popd > /dev/null;'
 }
 
 for_keys () {
+    cd $PROJECT_DIR/..
 	echo $@
 	if [ $1 == '--' ]; then
 		shift
